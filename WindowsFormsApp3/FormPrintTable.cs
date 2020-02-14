@@ -2,7 +2,7 @@
 
 namespace WindowsFormsApp3
 {
-    public partial class Form : System.Windows.Forms.Form
+    public partial class Form
     {
         private void PrintDot2CertType(Dot2CertType type)
         {

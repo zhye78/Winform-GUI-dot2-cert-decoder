@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp3
 {
-    public partial class Form : System.Windows.Forms.Form
+    public partial class Form
     {
         private string openDirPath = null; //directory path
         private string openFilePath = null; //file path

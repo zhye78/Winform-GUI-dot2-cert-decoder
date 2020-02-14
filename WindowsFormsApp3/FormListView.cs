@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp3
 {
-    public partial class Form : System.Windows.Forms.Form
+    public partial class Form
     {
         private int count = 1;
         private string fileForePath;
