@@ -108,8 +108,8 @@ namespace WindowsFormsApp3
             public uint region_num;    ///< 사각형 영역정보 개수
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] north_west_lat;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] north_west_lon;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] south_west_lat;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] south_west_lon;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] south_east_lat;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] south_east_lon;
         }
 
         /// 폴리곤(다각형) 영역정보 
