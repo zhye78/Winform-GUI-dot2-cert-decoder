@@ -173,6 +173,9 @@ namespace WindowsFormsApp3
 
         private void mapLoadByCert(Dot2CertValidRegion region)
         {
+            if (region.present == false)
+                return;
+
             PointLatLng point;
 
             switch (region.region_type)

@@ -31,12 +31,12 @@ namespace WindowsFormsApp3
                 {
                     //listview 갱신 직전 세팅
                     setListView();
-                    openFilePath = null;
 
                     //listview 갱신
                     this.listView.BeginUpdate(); // 업데이트가 끝날 때까지 UI 갱신 중지.
                     getFileList(openDirPath);
                     this.listView.EndUpdate();
+                    this.listView.Refresh();
                 }
             }
             catch (Exception) { }
@@ -61,12 +61,12 @@ namespace WindowsFormsApp3
                 {
                     //listview 갱신 직전 세팅
                     setListView();
-                    openDirPath = null;
 
                     //listview 갱신
                     this.listView.BeginUpdate(); // 업데이트가 끝날 때까지 UI 갱신 중지.
                     getFileList(openFilePath);
                     this.listView.EndUpdate();
+                    this.listView.Refresh();
                 }
             }
             catch (Exception) { }
@@ -81,8 +81,8 @@ namespace WindowsFormsApp3
             //디렉토리 드래그,드롭
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                openDirPath = dragPath[0];
                 openFilePath = null;
+                openDirPath = dragPath[0];
                 txtBoxOpen.Text = openDirPath;
 
                 //listview 갱신 직전 세팅
@@ -92,11 +92,12 @@ namespace WindowsFormsApp3
                 this.listView.BeginUpdate(); // 업데이트가 끝날 때까지 UI 갱신 중지.
                 getFileList(openDirPath);
                 this.listView.EndUpdate();
+                this.listView.Refresh();
             }
             else //파일 드래그,드롭
             {
-                openFilePath = dragPath[0];
                 openDirPath = null;
+                openFilePath = dragPath[0];
                 txtBoxOpen.Text = openFilePath;
 
                 //listview 갱신 직전 세팅
@@ -106,6 +107,7 @@ namespace WindowsFormsApp3
                 this.listView.BeginUpdate(); // 업데이트가 끝날 때까지 UI 갱신 중지.
                 getFileList(openFilePath);
                 this.listView.EndUpdate();
+                this.listView.Refresh();
             }
         }
 

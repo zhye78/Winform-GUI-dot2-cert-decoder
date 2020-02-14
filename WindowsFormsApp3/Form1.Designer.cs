@@ -358,14 +358,14 @@
             // 
             // columnHeaderDate
             // 
-            this.columnHeaderDate.Tag = "24";
+            this.columnHeaderDate.Tag = "26";
             this.columnHeaderDate.Text = "유효기간";
             this.columnHeaderDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeaderDate.Width = 120;
             // 
             // columnHeaderRegion
             // 
-            this.columnHeaderRegion.Tag = "18";
+            this.columnHeaderRegion.Tag = "16";
             this.columnHeaderRegion.Text = "유효지역";
             this.columnHeaderRegion.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeaderRegion.Width = 90;

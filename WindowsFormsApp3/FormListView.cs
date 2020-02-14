@@ -17,18 +17,21 @@ namespace WindowsFormsApp3
 
         private void getFileList(string openPath)
         {
-            try
-            {
+            //try
+            //{
                 //dir open
                 if (openDirPath != null)
                 {
                     DirectoryInfo di = new DirectoryInfo(openPath);
 
                     //이곳의 파일 탐색
-                    foreach (FileInfo file in di.GetFiles("*.cert"))
+                    foreach (FileInfo file in di.GetFiles())
                     {
-                        setList(file, count);
-                        count++;
+                        if(file.Extension.ToLower().CompareTo(".cert") == 0 || file.Extension.ToLower().CompareTo("") == 0)
+                        {
+                            setList(file, count);
+                            count++;
+                        }
                     }
                     //이곳의 디렉토리 탐색
                     foreach (DirectoryInfo dir in di.GetDirectories())
@@ -42,24 +45,35 @@ namespace WindowsFormsApp3
                 {
                     FileInfo fi = new FileInfo(openPath);
 
-                    if (fi.Extension.ToLower().CompareTo(".cert") == 0)
+                    if (fi.Extension.ToLower().CompareTo(".cert") == 0 || fi.Extension.ToLower().CompareTo("") == 0)
                         setList(fi, 1);
                     else
                         MessageBox.Show("인증서 파일을 선택해 주세요");
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.StackTrace.ToString());
-            }
-}
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.StackTrace.ToString());
+            //}
+        }
 
         //한자리 숫자 앞에 0 붙여서 리턴
         private string changeStr(string s)
         {
-            if (int.Parse(s) < 10)
-                return "0"+s;
+            int a = int.Parse(s);
+            if (a == 0)
+                return "01";
+            else if (0 < a && a < 10)
+                return "0" + s;
             else return s;
+        }
+        
+        private string changeYearStr(string s)
+        {
+            if (int.Parse(s) == 0)
+                return "100" + s;
+            else
+                return s;
         }
 
         //listview에 항목 추가하는 함수
@@ -71,18 +85,18 @@ namespace WindowsFormsApp3
             byte[] certValue = File.ReadAllBytes(file.FullName); //인증서 파일 내용 읽어오기
             DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo);
 
-            Dot2GeogarphicRegionType regionType = setListInfo.valid_region.region_type;
+            String regionType = setListInfo.valid_region.region_type.ToString()
+                .Substring(26, setListInfo.valid_region.region_type.ToString().Length - 26);
+
             Dot2CertTime starTime = setListInfo.valid_period.start;
             Dot2CertTime endTime = setListInfo.valid_period.end;
 
-            string start = starTime.year + changeStr(starTime.month.ToString()) + changeStr(starTime.day.ToString()) + " " 
+            string start = changeYearStr(starTime.year.ToString()) + changeStr(starTime.month.ToString()) + changeStr(starTime.day.ToString()) + " " 
                 + changeStr(starTime.hour.ToString()) + changeStr(starTime.minute.ToString()) + changeStr(starTime.second.ToString());
-            string end = endTime.year + changeStr(endTime.month.ToString()) + changeStr(endTime.day.ToString()) + " " 
+            string end = changeYearStr(endTime.year.ToString()) + changeStr(endTime.month.ToString()) + changeStr(endTime.day.ToString()) + " " 
                 + changeStr(endTime.hour.ToString()) + changeStr(endTime.minute.ToString()) + changeStr(endTime.second.ToString());
             DateTime startDay = DateTime.ParseExact(start, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
             DateTime endDay = DateTime.ParseExact(end, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
-
-            this.listView.BeginUpdate();
 
             item.SubItems.Add(getSimplePath(file.FullName)); //파일 경로
             //파일 유효기간
@@ -91,24 +105,22 @@ namespace WindowsFormsApp3
                 + " ~ " 
                 + endTime.year + "." + changeStr(endTime.month.ToString()) + "." + changeStr(endTime.day.ToString())
                 + "  " + changeStr(endTime.hour.ToString()) + ":" + changeStr(endTime.minute.ToString()) + ":" + changeStr(endTime.second.ToString()));
-            item.SubItems.Add(regionType.ToString().Substring(26, regionType.ToString().Length-26)); //파일 유효지역
+            item.SubItems.Add(regionType); //파일 유효지역
 
             //현재 날짜와 시간이 인증서 유효기간 내에 있으면 활성표시
             if (DateTime.Compare(currentTime, startDay) >= 0 && DateTime.Compare(currentTime, endDay) <= 0)
-            {
-                //item.ImageIndex = 0;
                 item.SubItems.Add("●");
-            }
             else
                 item.SubItems.Add("");
 
-            item.SubItems.Add(""); //입력된 지역 유효여부-초기값 빈칸
+            if (regionType == "Identified")
+                item.SubItems.Add("-");
+            else
+                item.SubItems.Add(""); //입력된 지역 유효여부-초기값 빈칸
 
             this.listView.Items.Add(item);
             item.SubItems[4].ForeColor = Color.Green;
-            item.SubItems[5].ForeColor = Color.Blue;
-            this.listView.EndUpdate();
-            this.listView.Refresh();
+            item.SubItems[5].ForeColor = Color.Black;
         }
 
         private double gn_GetBearingBetweenPoints(double lat1, double lon1, double lat2, double lon2)
@@ -172,7 +184,10 @@ namespace WindowsFormsApp3
 
                 //비교하며 표기
                 if ((1 - Math.Pow(x / a, 2) - Math.Pow(y / a, 2)) > 0)
+                {
+                    this.listView.Items[i].SubItems[5].ForeColor = Color.Blue;
                     this.listView.Items[i].SubItems[5].Text = "●";
+                }
             }
         }
 
@@ -206,24 +221,6 @@ namespace WindowsFormsApp3
                 Dot2CertificateInfo certInfo = new Dot2CertificateInfo();
 
                 byte[] certValue = File.ReadAllBytes(path); //인증서 파일 내용 읽어오기
-
-                //byte[] g_obe_cert = {
-                //    0x00, 0x03, 0x01, 0x80, 0x16, 0x3F, 0x2B, 0x7B, 0xC9, 0x92, 0x53, 0xF4, 0x50, 0x80, 0x80, 0x01,
-                //    0x0A, 0x28, 0x52, 0x79, 0x4D, 0xD6, 0x2F, 0xDB, 0xC7, 0x1C, 0x00, 0x00, 0x00, 0x0F, 0x28, 0x52,
-                //    0x79, 0x4D, 0xD6, 0x2F, 0xDB, 0xC7, 0x1C, 0xF4, 0xF7, 0xA1, 0x00, 0x01, 0x1E, 0x4F, 0x0A, 0x13,
-                //    0x84, 0x00, 0xA9, 0x83, 0x01, 0x02, 0x80, 0x03, 0x48, 0x80, 0x01, 0x9A, 0x01, 0x02, 0x00, 0x01,
-                //    0x20, 0x00, 0x01, 0x26, 0x81, 0x82, 0x86, 0x6D, 0xAE, 0xB3, 0x43, 0xC6, 0xD9, 0xA3, 0x7F, 0x8F,
-                //    0xC7, 0x20, 0xD1, 0xA6, 0xEF, 0x36, 0xAA, 0x27, 0x9E, 0x39, 0xE1, 0x46, 0x18, 0xA0, 0x09, 0x48,
-                //    0x2E, 0x5D, 0x0E, 0x7A, 0x98, 0x66
-                //};
-                //byte[] g_rse_cert = {
-                //    0x00,0x03,0x01,0x80,0x16,0x3F,0x2B,0x7B,0xC9,0x92,0x53,0xF4,0x50,0x82,0x08,0x66,
-                //    0xDF,0x39,0x62,0x82,0x56,0xB8,0x4E,0x00,0x00,0x00,0x00,0x00,0x1D,0xC6,0x27,0x0C,
-                //    0x84,0x03,0x52,0x80,0x16,0x57,0xD9,0xD6,0x4B,0xB8,0xA7,0xFE,0x0B,0xB8,0x01,0x01,
-                //    0x00,0x01,0x87,0x81,0x82,0x14,0x45,0x35,0x4A,0x04,0xAD,0x1A,0x94,0x82,0x17,0x25,
-                //    0xCA,0x0F,0x92,0xF2,0xB9,0x1B,0x47,0x6C,0xB1,0x2C,0xD3,0x95,0xC1,0xC3,0xDD,0x51,
-                //    0x85,0x05,0x21,0x81,0x3B
-                //};
 
                 //인증서 분석 c 함수
                 DecodeDot2Certificate(certValue, certValue.Length, ref certInfo);

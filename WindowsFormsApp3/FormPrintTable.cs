@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace WindowsFormsApp3
 {
@@ -7,6 +8,7 @@ namespace WindowsFormsApp3
         private void PrintDot2CertType(Dot2CertType type)
         {
             this.gridView[0, 0].Value = "인증서 유형";
+            this.gridView[1, 0].Value = "";
 
             if (type.ToString() == "kDot2CertType_Explicit")
                 this.gridView[1, 0].Value = "explicit";
@@ -17,6 +19,7 @@ namespace WindowsFormsApp3
         private void PrintDot2CertIssuerId(Dot2CertIssuerId id)
         {
             this.gridView[0, 1].Value = "발행자 ID";
+            this.gridView[1, 1].Value = "";
             
             switch (id.issuer_id_type)
             {
@@ -50,6 +53,7 @@ namespace WindowsFormsApp3
         private void PrintDot2CertValidPeriod(Dot2CertValidPeriod period)
         {
             this.gridView[0, 2].Value = "유효 기간";
+            this.gridView[1, 2].Value = "";
 
             this.gridView[1, 2].Value = "-Start: " + period.start.year + "-" + changeStr(period.start.month.ToString()) + "-" + changeStr(period.start.day.ToString()) + " "
                 + changeStr(period.start.hour.ToString()) + ":" + changeStr(period.start.minute.ToString()) + ":" + changeStr(period.start.second.ToString()) 
@@ -60,6 +64,9 @@ namespace WindowsFormsApp3
 
         private void PrintDot2CertValidRegion(Dot2CertValidRegion region)
         {
+            this.gridView[0, 3].Value = "";
+            this.gridView[1, 3].Value = "";
+
             if (region.present == false)
                 return;
 
@@ -131,6 +138,7 @@ namespace WindowsFormsApp3
         private void PrintDot2CertAppPermissions(Dot2CertAppPermissions permissions)
         {
             int count = 0;
+            this.gridView[1, 4].Value = "";
 
             if (permissions.present == false)
                 return;
@@ -155,7 +163,7 @@ namespace WindowsFormsApp3
 
         private void PrintDot2CertHash(byte[] certHash)
         {
-            this.gridView[0, 5].Value = "SHA256 hash";
+            this.gridView[0, 5].Value = "SHA256 Hash";
             this.gridView[1, 5].Value = "0x";
             for(int i = 0; i < 32; i++)
                 this.gridView[1, 5].Value += Convert.ToString(certHash[i], 16);
@@ -163,7 +171,7 @@ namespace WindowsFormsApp3
 
         private void PrintDot2CertHashedid10(byte[] certHashid10)
         {
-            this.gridView[0, 6].Value = "Hashedid10";
+            this.gridView[0, 6].Value = "HashedId10";
             this.gridView[1, 6].Value = "0x";
             for (int i = 0; i < 10; i++)
                 this.gridView[1, 6].Value += Convert.ToString(certHashid10[i], 16);
@@ -171,7 +179,7 @@ namespace WindowsFormsApp3
 
         private void PrintDot2CertHashedid8(byte[] certHashid8)
         {
-            this.gridView[0, 7].Value = "Hashedid8";
+            this.gridView[0, 7].Value = "HashedId8";
             this.gridView[1, 7].Value = "0x";
             for (int i = 0; i < 8; i++)
                 this.gridView[1, 7].Value += Convert.ToString(certHashid8[i], 16);
