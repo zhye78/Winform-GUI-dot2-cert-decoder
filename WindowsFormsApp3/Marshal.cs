@@ -116,7 +116,6 @@ namespace WindowsFormsApp3
         public struct Dot2PolygoanlRegion
         {
             public uint point_num;     ///< 포인트 개수
-            //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] public Dot2TwoDLocation[] point;  ///< 포인트(들)
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] point_lat;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public int[] point_lon;
         }

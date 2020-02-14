@@ -22,7 +22,8 @@ namespace WindowsFormsApp3
             {
                 case Dot2CertIssuerIdType.kDot2CertIssuerIdType_Sha256HashedId8:
                     this.gridView[1, 1].Value = "-type: sha256 hashedid8" + Environment.NewLine
-                        + "-id: 0x" + Convert.ToString(id.issuer_hashedid8[0], 16) + Convert.ToString(id.issuer_hashedid8[1], 16) 
+                        + "-id: 0x" 
+                        + Convert.ToString(id.issuer_hashedid8[0], 16) + Convert.ToString(id.issuer_hashedid8[1], 16) 
                         + Convert.ToString(id.issuer_hashedid8[2], 16) + Convert.ToString(id.issuer_hashedid8[3], 16) 
                         + Convert.ToString(id.issuer_hashedid8[4], 16) + Convert.ToString(id.issuer_hashedid8[5], 16) 
                         + Convert.ToString(id.issuer_hashedid8[6], 16) + Convert.ToString(id.issuer_hashedid8[7], 16);
@@ -33,7 +34,8 @@ namespace WindowsFormsApp3
                     break;
                 case Dot2CertIssuerIdType.kDot2CertIssuerIdType_Sha384HashedId8:
                     this.gridView[1, 1].Value = "-type: sha256 hashedid8" + Environment.NewLine
-                        + "-id: 0x" + Convert.ToString(id.issuer_hashedid8[0], 16) + Convert.ToString(id.issuer_hashedid8[1], 16) 
+                        + "-id: 0x" 
+                        + Convert.ToString(id.issuer_hashedid8[0], 16) + Convert.ToString(id.issuer_hashedid8[1], 16) 
                         + Convert.ToString(id.issuer_hashedid8[2], 16) + Convert.ToString(id.issuer_hashedid8[3], 16) 
                         + Convert.ToString(id.issuer_hashedid8[4], 16) + Convert.ToString(id.issuer_hashedid8[5], 16) 
                         + Convert.ToString(id.issuer_hashedid8[6], 16) + Convert.ToString(id.issuer_hashedid8[7], 16);
@@ -82,7 +84,7 @@ namespace WindowsFormsApp3
                         for (int i = 0; i < set.region_num; i++)
                         {
                             this.gridView[1,3].Value += "Region[" + i + "] notrh/west lat: " + set.north_west_lat[i] + ", lon: " + set.north_west_lon[i]
-                                + ", south/east lat: " + set.south_west_lat + ", lon: " + set.south_west_lon;
+                                + ", south/east lat: " + set.south_east_lat + ", lon: " + set.south_east_lon;
                             if (i != set.region_num - 1)
                                 this.gridView[1, 3].Value += Environment.NewLine;
                         }
