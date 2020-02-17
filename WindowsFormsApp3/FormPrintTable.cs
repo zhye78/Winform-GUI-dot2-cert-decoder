@@ -64,7 +64,7 @@ namespace WindowsFormsApp3
 
         private void PrintDot2CertValidRegion(Dot2CertValidRegion region)
         {
-            this.gridView[0, 3].Value = "";
+            this.gridView[0, 3].Value = "유효 지역";
             this.gridView[1, 3].Value = "";
 
             if (region.present == false)
@@ -75,7 +75,7 @@ namespace WindowsFormsApp3
                 case Dot2GeogarphicRegionType.kDot2GeogarphicRegionType_Circular:
                     {
                         Dot2CircularRegion c = region.circular;
-                        this.gridView[0, 3].Value = "유효 지역(circular)";
+                        this.gridView[0, 3].Value += "(circular)";
                         this.gridView[1, 3].Value = "-center lat: " + c.center.lat
                             + Environment.NewLine + "-center lon: " + c.center.lon
                             + Environment.NewLine + "-radius: " + c.radius + "m";
@@ -85,7 +85,7 @@ namespace WindowsFormsApp3
                     {
                         Dot2RectangularRegionSet set = region.rectangular;
 
-                        this.gridView[0, 3].Value = "유효 지역(rectangular)";
+                        this.gridView[0, 3].Value += "(rectangular)";
                         this.gridView[1, 3].Value = "-region num: " + set.region_num + Environment.NewLine;
 
                         for (int i = 0; i < set.region_num; i++)
@@ -101,7 +101,7 @@ namespace WindowsFormsApp3
                     {
                         Dot2PolygoanlRegion p = region.polygonal;
 
-                        this.gridView[0, 3].Value = "유효 지역(polygonal)";
+                        this.gridView[0, 3].Value += "(polygonal)";
                         this.gridView[1, 3].Value = "-point num: " + p.point_num + Environment.NewLine;
 
                         for (int i = 0; i < p.point_num; i++)
@@ -116,7 +116,7 @@ namespace WindowsFormsApp3
                     {
                         Dot2IdentifiedRegionSet set = region.identified;
 
-                        this.gridView[0, 3].Value = "유효 지역(identified)";
+                        this.gridView[0, 3].Value += "(identified)";
                         this.gridView[1, 3].Value = "-num :" + set.num + Environment.NewLine;
 
                         for (int i = 0; i < set.num; i++)
@@ -128,10 +128,10 @@ namespace WindowsFormsApp3
                         }
                     }
                     break;
-                case Dot2GeogarphicRegionType.kDot2GeogarphicRegionType_Unknown: break;
-                default:
-                    this.gridView[0, 3].Value = "유효 지역(unknown)";
+                case Dot2GeogarphicRegionType.kDot2GeogarphicRegionType_Unknown:
+                    this.gridView[0, 3].Value += "(unknown)";
                     break;
+                default: break;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp3
@@ -15,10 +16,11 @@ namespace WindowsFormsApp3
 
         private Dot2CertificateInfo setListInfo = new Dot2CertificateInfo();
 
+        //[HandleProcessCorruptedStateExceptions]
         private void getFileList(string openPath)
         {
-            //try
-            //{
+            try
+            {
                 //dir open
                 if (openDirPath != null)
                 {
@@ -50,12 +52,9 @@ namespace WindowsFormsApp3
                     else
                         MessageBox.Show("인증서 파일을 선택해 주세요");
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.StackTrace.ToString());
-            //}
-        }
+            }
+            catch (Exception) { }
+}
 
         //한자리 숫자 앞에 0 붙여서 리턴
         private string changeStr(string s)
@@ -83,7 +82,10 @@ namespace WindowsFormsApp3
             item.UseItemStyleForSubItems = false;
 
             byte[] certValue = File.ReadAllBytes(file.FullName); //인증서 파일 내용 읽어오기
-            DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo);
+            unsafe
+            {
+                DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo);
+            }
 
             String regionType = setListInfo.valid_region.region_type.ToString()
                 .Substring(26, setListInfo.valid_region.region_type.ToString().Length - 26);
@@ -95,6 +97,7 @@ namespace WindowsFormsApp3
                 + changeStr(starTime.hour.ToString()) + changeStr(starTime.minute.ToString()) + changeStr(starTime.second.ToString());
             string end = changeYearStr(endTime.year.ToString()) + changeStr(endTime.month.ToString()) + changeStr(endTime.day.ToString()) + " " 
                 + changeStr(endTime.hour.ToString()) + changeStr(endTime.minute.ToString()) + changeStr(endTime.second.ToString());
+
             DateTime startDay = DateTime.ParseExact(start, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
             DateTime endDay = DateTime.ParseExact(end, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
 
