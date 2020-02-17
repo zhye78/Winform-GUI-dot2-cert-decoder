@@ -183,7 +183,7 @@ namespace WindowsFormsApp3
         {
             public uint psid;    ///< 10진수 숫자로 표시되는 PSID
             public uint p_encoded_psid_len;                  ///< p-encoded PSID 길이
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] byte[] p_encoded_psid;   ///< p-encoded PSID
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] byte[] p_encoded_psid;   ///< p-encoded PSID
         }
 
         /// SSP(Service Specific Permission) 정보
