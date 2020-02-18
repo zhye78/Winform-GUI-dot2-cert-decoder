@@ -211,6 +211,15 @@ namespace WindowsFormsApp3
                     break;
                 case Dot2GeogarphicRegionType.kDot2GeogarphicRegionType_Identified:
                     {
+                        if (polygon != null) //map에 있는 polygon, marker 없애기
+                        {
+                            polList.Clear();
+                            overlay.Polygons.Remove(polygon);
+                            polygon = null;
+
+                            overlay.Markers.Remove(marker);
+                            marker = null;
+                        }
                     }
                     break;
                 case Dot2GeogarphicRegionType.kDot2GeogarphicRegionType_Unknown: break;

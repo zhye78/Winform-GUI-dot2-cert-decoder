@@ -16,8 +16,6 @@ namespace WindowsFormsApp3
             InitializeComponent();
 
             //font
-            //Font font = new Font(MyFont.Families[0], 9);
-
             privateFont = new PrivateFontCollection();
             privateFont.AddFontFile("./Resources/NanumGothic.ttf");
             Font font = new Font(privateFont.Families[0], 9);

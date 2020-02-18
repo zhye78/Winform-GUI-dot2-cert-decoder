@@ -38,6 +38,5 @@ namespace WindowsFormsApp3
         //        privateFont.AddMemoryFont(fontBuffer, font.Length);
         //    }
         //}
-
     }
 }

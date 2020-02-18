@@ -82,48 +82,55 @@ namespace WindowsFormsApp3
             item.UseItemStyleForSubItems = false;
 
             byte[] certValue = File.ReadAllBytes(file.FullName); //인증서 파일 내용 읽어오기
-            unsafe
-            {
-                DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo);
-            }
-
-            String regionType = setListInfo.valid_region.region_type.ToString()
-                .Substring(26, setListInfo.valid_region.region_type.ToString().Length - 26);
-
-            Dot2CertTime starTime = setListInfo.valid_period.start;
-            Dot2CertTime endTime = setListInfo.valid_period.end;
-
-            string start = changeYearStr(starTime.year.ToString()) + changeStr(starTime.month.ToString()) + changeStr(starTime.day.ToString()) + " " 
-                + changeStr(starTime.hour.ToString()) + changeStr(starTime.minute.ToString()) + changeStr(starTime.second.ToString());
-            string end = changeYearStr(endTime.year.ToString()) + changeStr(endTime.month.ToString()) + changeStr(endTime.day.ToString()) + " " 
-                + changeStr(endTime.hour.ToString()) + changeStr(endTime.minute.ToString()) + changeStr(endTime.second.ToString());
-
-            DateTime startDay = DateTime.ParseExact(start, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
-            DateTime endDay = DateTime.ParseExact(end, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
+            DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo); //읽어온 파일 내용 분석
 
             item.SubItems.Add(getSimplePath(file.FullName)); //파일 경로
-            //파일 유효기간
-            item.SubItems.Add(starTime.year + "." + changeStr(starTime.month.ToString()) + "." + changeStr(starTime.day.ToString())
-                + "  " + changeStr(starTime.hour.ToString()) + ":" + changeStr(starTime.minute.ToString()) + ":" + changeStr(starTime.second.ToString())
-                + " ~ " 
-                + endTime.year + "." + changeStr(endTime.month.ToString()) + "." + changeStr(endTime.day.ToString())
-                + "  " + changeStr(endTime.hour.ToString()) + ":" + changeStr(endTime.minute.ToString()) + ":" + changeStr(endTime.second.ToString()));
-            item.SubItems.Add(regionType); //파일 유효지역
+            if (setListInfo.result == 0)
+            {
+                String regionType = setListInfo.valid_region.region_type.ToString()
+                    .Substring(26, setListInfo.valid_region.region_type.ToString().Length - 26);
 
-            //현재 날짜와 시간이 인증서 유효기간 내에 있으면 활성표시
-            if (DateTime.Compare(currentTime, startDay) >= 0 && DateTime.Compare(currentTime, endDay) <= 0)
-                item.SubItems.Add("●");
+                Dot2CertTime starTime = setListInfo.valid_period.start;
+                Dot2CertTime endTime = setListInfo.valid_period.end;
+
+                string start = changeYearStr(starTime.year.ToString()) + changeStr(starTime.month.ToString()) + changeStr(starTime.day.ToString()) + " " 
+                    + changeStr(starTime.hour.ToString()) + changeStr(starTime.minute.ToString()) + changeStr(starTime.second.ToString());
+                string end = changeYearStr(endTime.year.ToString()) + changeStr(endTime.month.ToString()) + changeStr(endTime.day.ToString()) + " " 
+                    + changeStr(endTime.hour.ToString()) + changeStr(endTime.minute.ToString()) + changeStr(endTime.second.ToString());
+                DateTime startDay = DateTime.ParseExact(start, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
+                DateTime endDay = DateTime.ParseExact(end, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture);
+                
+                //파일 유효기간
+                item.SubItems.Add(starTime.year + "." + changeStr(starTime.month.ToString()) + "." + changeStr(starTime.day.ToString())
+                    + "  " + changeStr(starTime.hour.ToString()) + ":" + changeStr(starTime.minute.ToString()) + ":" + changeStr(starTime.second.ToString())
+                    + " ~ " 
+                    + endTime.year + "." + changeStr(endTime.month.ToString()) + "." + changeStr(endTime.day.ToString())
+                    + "  " + changeStr(endTime.hour.ToString()) + ":" + changeStr(endTime.minute.ToString()) + ":" + changeStr(endTime.second.ToString()));
+                item.SubItems.Add(regionType); //파일 유효지역
+
+                //현재 날짜와 시간이 인증서 유효기간 내에 있으면 활성표시
+                if (DateTime.Compare(currentTime, startDay) >= 0 && DateTime.Compare(currentTime, endDay) <= 0)
+                    item.SubItems.Add("●");
+                else
+                    item.SubItems.Add("");
+
+                if (regionType == "Identified")
+                    item.SubItems.Add("-");
+                else
+                    item.SubItems.Add(""); //입력된 지역 유효여부-초기값 빈칸
+
+                this.listView.Items.Add(item);
+                item.SubItems[4].ForeColor = Color.Green;
+                item.SubItems[5].ForeColor = Color.Black;
+            }
             else
+            {
+                item.SubItems.Add("0.00.00 00:00:00 ~ 0.00.00 00:00:00");
+                item.SubItems.Add(""); //파일 유효지역
                 item.SubItems.Add("");
-
-            if (regionType == "Identified")
-                item.SubItems.Add("-");
-            else
                 item.SubItems.Add(""); //입력된 지역 유효여부-초기값 빈칸
-
-            this.listView.Items.Add(item);
-            item.SubItems[4].ForeColor = Color.Green;
-            item.SubItems[5].ForeColor = Color.Black;
+                this.listView.Items.Add(item);
+            }
         }
 
         private double gn_GetBearingBetweenPoints(double lat1, double lon1, double lat2, double lon2)
@@ -224,26 +231,38 @@ namespace WindowsFormsApp3
                 Dot2CertificateInfo certInfo = new Dot2CertificateInfo();
 
                 byte[] certValue = File.ReadAllBytes(path); //인증서 파일 내용 읽어오기
+                DecodeDot2Certificate(certValue, certValue.Length, ref certInfo); //인증서 분석 c 함수
 
-                //인증서 분석 c 함수
-                DecodeDot2Certificate(certValue, certValue.Length, ref certInfo);
+                if (certInfo.result == 0) //분석 성공시
+                {
+                    //table(gridview)에 인증서 분석 내용 출력
+                    PrintDot2CertType(certInfo.cert_type);
+                    PrintDot2CertIssuerId(certInfo.issuer_id);
+                    PrintDot2CertValidPeriod(certInfo.valid_period);
+                    PrintDot2CertValidRegion(certInfo.valid_region);
+                    PrintDot2CertAppPermissions(certInfo.app_permissions);
+                    PrintDot2CertHash(certInfo.cert_hash);
+                    PrintDot2CertHashedid10(certInfo.cert_hashedid10);
+                    PrintDot2CertHashedid8(certInfo.cert_hashedid8);
 
-                //table(gridview)에 인증서 분석 내용 출력
-                PrintDot2CertType(certInfo.cert_type);
-                PrintDot2CertIssuerId(certInfo.issuer_id);
-                PrintDot2CertValidPeriod(certInfo.valid_period);
-                PrintDot2CertValidRegion(certInfo.valid_region);
-                PrintDot2CertAppPermissions(certInfo.app_permissions);
-                PrintDot2CertHash(certInfo.cert_hash);
-                PrintDot2CertHashedid10(certInfo.cert_hashedid10);
-                PrintDot2CertHashedid8(certInfo.cert_hashedid8);
+                    //richTextBox에 인증서 분석 full contents 출력
+                    string[] fullContents = certInfo.contents_str.Split('\n');
+                    for(int i = 0; i < fullContents.Length; i++)
+                        this.richTxtBox.AppendText(fullContents[i] + "\r\n");
 
-                //richTextBox에 인증서 분석 full contents 출력
-                string[] fullContents = certInfo.contents_str.Split('\n');
-                for(int i = 0; i < fullContents.Length; i++)
-                    this.richTxtBox.AppendText(fullContents[i] + "\r\n");
-
-                mapLoadByCert(certInfo.valid_region); //지도 로드
+                    mapLoadByCert(certInfo.valid_region); //지도 로드
+                }
+                else //분석 실패시
+                {
+                    this.gridView[1, 0].Value = "인증서 분석에 실패했습니다.";
+                    this.gridView[1, 1].Value = "";
+                    this.gridView[1, 2].Value = "";
+                    this.gridView[1, 3].Value = "";
+                    this.gridView[1, 4].Value = "";
+                    this.gridView[1, 5].Value = "";
+                    this.gridView[1, 6].Value = "";
+                    this.gridView[1, 7].Value = "";
+                }
             }
             catch (Exception ex)
             {
