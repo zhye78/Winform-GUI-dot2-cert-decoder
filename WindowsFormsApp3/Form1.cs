@@ -102,7 +102,5 @@ namespace WindowsFormsApp3
                     break;
             }
         }
-
-       
     }
 }
