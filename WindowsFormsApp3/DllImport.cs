@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace WindowsFormsApp3
 {
-    public partial class Form
+    public class DllImport
     {
         //처리 결과 코드
         public enum Dot2Result
         {
             kDot2Result_Success,
         };
-
+        
         /// 인증서 유형
         public enum Dot2CertType
         {

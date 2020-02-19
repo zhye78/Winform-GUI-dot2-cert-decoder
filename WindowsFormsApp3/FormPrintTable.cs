@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using static WindowsFormsApp3.DllImport;
 
 namespace WindowsFormsApp3
 {

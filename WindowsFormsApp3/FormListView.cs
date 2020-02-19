@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Windows.Forms;
+using static WindowsFormsApp3.DllImport;
 
 namespace WindowsFormsApp3
 {
@@ -82,10 +83,10 @@ namespace WindowsFormsApp3
             item.UseItemStyleForSubItems = false;
 
             byte[] certValue = File.ReadAllBytes(file.FullName); //인증서 파일 내용 읽어오기
-            DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo); //읽어온 파일 내용 분석
+            DllImport.DecodeDot2Certificate(certValue, certValue.Length, ref setListInfo); //읽어온 파일 내용 분석
 
             item.SubItems.Add(getSimplePath(file.FullName)); //파일 경로
-            if (setListInfo.result == 0)
+            if (setListInfo.result == 0) //분석 성공시
             {
                 String regionType = setListInfo.valid_region.region_type.ToString()
                     .Substring(26, setListInfo.valid_region.region_type.ToString().Length - 26);
@@ -123,9 +124,9 @@ namespace WindowsFormsApp3
                 item.SubItems[4].ForeColor = Color.Green;
                 item.SubItems[5].ForeColor = Color.Black;
             }
-            else
+            else //분석 실패시
             {
-                item.SubItems.Add("0.00.00 00:00:00 ~ 0.00.00 00:00:00");
+                item.SubItems.Add("00.00.00 00:00:00 ~ 00.00.00 00:00:00");
                 item.SubItems.Add(""); //파일 유효지역
                 item.SubItems.Add("");
                 item.SubItems.Add(""); //입력된 지역 유효여부-초기값 빈칸
@@ -216,7 +217,7 @@ namespace WindowsFormsApp3
 
             return simplePath.Substring(0, (simplePath.Length - 1));
         }
-
+        
         //listview의 각 항목 클릭할 때 호출되는 함수
         private void listView_MouseClick(object sender, MouseEventArgs e)
         {
@@ -254,14 +255,10 @@ namespace WindowsFormsApp3
                 }
                 else //분석 실패시
                 {
+                    for (int i = 0; i < 2; i++)
+                        for (int j = 0; j < 8; j++)
+                            this.gridView[i, j].Value = "";
                     this.gridView[1, 0].Value = "인증서 분석에 실패했습니다.";
-                    this.gridView[1, 1].Value = "";
-                    this.gridView[1, 2].Value = "";
-                    this.gridView[1, 3].Value = "";
-                    this.gridView[1, 4].Value = "";
-                    this.gridView[1, 5].Value = "";
-                    this.gridView[1, 6].Value = "";
-                    this.gridView[1, 7].Value = "";
                 }
             }
             catch (Exception ex)

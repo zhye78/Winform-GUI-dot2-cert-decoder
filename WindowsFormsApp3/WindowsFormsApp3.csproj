@@ -145,9 +145,7 @@
     <Compile Include="FormPrintTable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DllImport.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="DllImport.cs" />
     <Compile Include="MyFont.cs" />
     <Compile Include="MyTextBox.cs">
       <SubType>Component</SubType>
